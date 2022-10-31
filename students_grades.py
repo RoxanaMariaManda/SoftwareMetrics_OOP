@@ -15,11 +15,15 @@ Note: The output of the programm will be easily writtable and readable from txt 
 Note: All exceptions will be correctly raised with a friendly user readable message.
 '''
 
+from abc import abstractmethod
+from datetime import date
+
 ### ------------------- STRUCTURE EXAMPLE --------------------------- ###
 
 class Student:  # parent class for the different types of students
 
-    def __init__(self, name, age, disability, dissertation, scholarship, average_grade):
+    def __init__(self, name, age, enrollment_year,
+                 disability, dissertation, scholarship, average_grade):
         """Initialize student
 
         Args:
@@ -32,6 +36,7 @@ class Student:  # parent class for the different types of students
         """
         self.name = name
         self.age = age
+        self.enrollment_year = enrollment_year
         self.__disability = disability  # private method to protect the information from being accessed
         self.dissertation = dissertation
         self.scholarship = scholarship
@@ -44,11 +49,25 @@ class Student:  # parent class for the different types of students
         """
         pass
 
+    @staticmethod
+    def isFailing(average_grade):
+        return average_grade > 5
+
+    @classmethod
+    def currentStudyYear(cls, name, enrollment_year):
+        return cls(name, date.today().year - enrollment_year)
+
+    # abstract methods to ensure they are implemented in all children classes
+    @abstractmethod
     def passFail(self, **kwargs):
         """
             *kwargs (floats): Replaced by the grades obtained by the students. 
             Check whether a student has a higher grade than the passing threshold. 
         """
+        pass
+
+    @abstractmethod
+    def printPathway(self):
         pass
 
 
@@ -78,7 +97,7 @@ class Software(Student):  # child of parent class Student
     def printPathway(cls):
         print(f'This student is part of the {cls.pathway} pathway')
 
-class Data(Student):
+class WebApps(Student):
     pathway = 'Data'
 
     def __init__(self, input):
@@ -99,16 +118,61 @@ class Year():   # class that categorises the students based on the Year of study
     pass_grade = 5
 
     def __init__(self, students, n_scholars):
-        self.students = students
+        self.students = students if students else []
         self.n_scholars = n_scholars
 
+    @abstractmethod
+    # get a list with the students obtaining the highest or lowest grades in order
+    def orderStudentsByGrade(self):
+        pass
 
-class Course(): # class that contains all students in an academic year for one course
+    @abstractmethod
+    # retrieve a list with all students taking a certain class in alphabetical order
+    def listStudent(self):
+        pass
 
-    def __init__(self, students):
-        self.students = students
+    # get the average grade either for the classroom or the course
+    @abstractmethod
+    def averageGrades(self, students):
+        scores = []
+        for student in self.students:
+            scores += student.scores
+        return sum(scores) / len(scores)
+
+    def failingStudents(self):
+        pass
+
+class Course(Year): # class that contains all students in an academic year for one course
+
+    def __init__(self):
+        super().__init__()
 
     def orderStudentsByGrade(self):
+        pass
+
+    def listStudent(self):
+        pass
+
+    def averageGrades(self, students):
+        super(Year, self).averageGrades(students)
+
+class Classroom(Year):
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+
+    def orderStudentsByGrade(self):
+        pass
+
+    def listStudent(self):
+        pass
+
+    def averageGrades(self, students):
+        super(Year, self).averageGrades(students)
+
+    def failingStudents(self):
+        Year.__failingStudents()
         pass
 
 
@@ -140,3 +204,6 @@ class FileHandler:
 
     def readFile(cls):
         pass
+
+if __name__ == '__main__':
+    pass
