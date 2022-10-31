@@ -1,7 +1,7 @@
 # SoftwareMetrics_OOP
 
 
-The below metrics are following the SOLID principles, as well as PEP guidelines. 
+The below metrics are also ensuring the SOLID principles, as well as PEP guidelines. 
 
 1. Well-commented code.
   (2) and (3) ensure that each class will have only one responsibility. 
